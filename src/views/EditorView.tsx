@@ -534,23 +534,22 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
                     </div>
                 )}
             </div>
+
+            {/* Save Template Modal */}
+            <SaveTemplateModal
+                isOpen={showSaveModal}
+                onClose={() => setShowSaveModal(false)}
+                onSave={handleSaveTemplate}
+                existingNames={templates.map(t => t.name)}
+            />
+
+            {/* Suggestions Confirmation Modal */}
+            <SuggestionsConfirmModal
+                isOpen={showSuggestionsModal}
+                onClose={() => setShowSuggestionsModal(false)}
+                onConfirm={handleConfirmSuggestions}
+                newSuggestions={pendingNewSuggestions}
+            />
         </div>
-
-            {/* Save Template Modal */ }
-    <SaveTemplateModal
-        isOpen={showSaveModal}
-        onClose={() => setShowSaveModal(false)}
-        onSave={handleSaveTemplate}
-        existingNames={templates.map(t => t.name)}
-    />
-
-    {/* Suggestions Confirmation Modal */ }
-    <SuggestionsConfirmModal
-        isOpen={showSuggestionsModal}
-        onClose={() => setShowSuggestionsModal(false)}
-        onConfirm={handleConfirmSuggestions}
-        newSuggestions={pendingNewSuggestions}
-    />
-        </div >
     );
 };
