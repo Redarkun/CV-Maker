@@ -20,6 +20,35 @@ const saveTemplates = (store: TemplatesStore): void => {
     }
 };
 
+// Deep deserialize CV - convert all date strings back to Date objects
+const deserializeCV = (cv: any): CV => {
+    return {
+        ...cv,
+        createdAt: new Date(cv.createdAt),
+        updatedAt: new Date(cv.updatedAt),
+        sections: cv.sections.map((section: any) => {
+            const data = section.data;
+
+            // Deserialize Experience section dates
+            if (data.type === 'experience') {
+                return {
+                    ...section,
+                    data: {
+                        ...data,
+                        items: data.items.map((item: any) => ({
+                            ...item,
+                            startDate: new Date(item.startDate),
+                            endDate: item.endDate ? new Date(item.endDate) : null,
+                        })),
+                    },
+                };
+            }
+
+            return section;
+        }),
+    };
+};
+
 // Load from localStorage
 const loadTemplates = (): TemplatesStore => {
     try {
@@ -34,16 +63,12 @@ const loadTemplates = (): TemplatesStore => {
             return getEmptyStore();
         }
 
-        // Convert date strings back to Date objects
+        // Convert date strings back to Date objects (deep deserialization)
         parsed.templates = parsed.templates.map(t => ({
             ...t,
             createdAt: new Date(t.createdAt),
             updatedAt: new Date(t.updatedAt),
-            cv: {
-                ...t.cv,
-                createdAt: new Date(t.cv.createdAt),
-                updatedAt: new Date(t.cv.updatedAt),
-            },
+            cv: deserializeCV(t.cv),
         }));
 
         return parsed;

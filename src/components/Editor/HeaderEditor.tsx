@@ -101,11 +101,14 @@ const SortableField: React.FC<SortableFieldProps> = ({ field, onUpdate }) => {
 
                     {/* Layout Toggle */}
                     <button
-                        onClick={() => onUpdate(field.id, { layout: field.layout === 'full' ? 'half' : 'full' })}
+                        onClick={() => {
+                            const nextLayout = field.layout === 'full' ? 'half' : field.layout === 'half' ? 'third' : 'full';
+                            onUpdate(field.id, { layout: nextLayout });
+                        }}
                         className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
-                        title={field.layout === 'full' ? 'Switch to half width' : 'Switch to full width'}
+                        title="Toggle width: Full → Half → Third"
                     >
-                        {field.layout === 'full' ? '⬌ Full' : '⬌ Half'}
+                        {field.layout === 'full' ? '▭ Full' : field.layout === 'half' ? '▬ Half' : '▃ Third'}
                     </button>
                 </div>
 

@@ -198,6 +198,20 @@ export const ExperienceEditor: React.FC<ExperienceEditorProps> = ({ data, onChan
                                         </div>
                                     </div>
 
+                                    {/* Year-only toggle */}
+                                    <div className="flex items-center mt-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`year-only-${item.id}`}
+                                            checked={item.dateFormat === 'year-only'}
+                                            onChange={(e) => handleItemChange(item.id, 'dateFormat', e.target.checked ? 'year-only' : 'month-year')}
+                                            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mr-2"
+                                        />
+                                        <label htmlFor={`year-only-${item.id}`} className="text-sm text-gray-700">
+                                            Show year only (e.g., "2020 - 2023" instead of "Jan 2020 - Dec 2023")
+                                        </label>
+                                    </div>
+
                                     <div>
                                         <div className="flex justify-between items-center mb-2">
                                             <label className="block text-sm font-medium text-gray-700">

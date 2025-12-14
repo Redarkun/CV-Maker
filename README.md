@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# CV Maker 📄
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Work in Progress](https://img.shields.io/badge/status-work%20in%20progress-yellow)
+![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6?logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-6.0-646cff?logo=vite)
 
-Currently, two official plugins are available:
+> **⚠️ This project is currently under active development. Features and APIs may change.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Professional CV/Resume builder with real-time preview, multiple templates, and ATS-friendly exports.
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### ✅ Implemented
+- **Live Editor**: Real-time CV editing with drag-and-drop section reordering
+- **Multi-Template System**: Save and load custom CV templates
+- **Smart Suggestions**: Context-aware autocomplete for CV fields
+- **Export Options**: PDF and DOCX export with print-optimized styling
+- **ATS-Friendly**: Left-aligned, clean formatting without images or icons
+- **Optional Sections**: Projects, Languages, Certifications, Awards (drag to activate)
+- **Header Alignment**: Choose between left-aligned and centered header
+- **Field Management**: Enable/disable, reorder, and customize header fields
 
-## Expanding the ESLint configuration
+### 🚧 In Development
+- ATS Compatibility Analyzer
+- More template designs
+- Import from existing CVs
+- Year-only date format toggle for Experience/Education
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Drag & Drop**: @dnd-kit
+- **PDF Export**: jsPDF
+- **DOCX Export**: docx
+- **State Management**: React Hooks (custom)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📦 Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/cvmaker.git
+cd cvmaker
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎯 Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Edit your CV**: Fill in your information in the left panel
+2. **Preview**: See live updates in the right panel
+3. **Reorder sections**: Drag sections to change order
+4. **Add optional sections**: Drag from "Inactive Sections" to activate
+5. **Export**: Download as PDF or DOCX
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📋 Project Structure
+
 ```
+cvmaker/
+├── src/
+│   ├── components/        # React components
+│   │   ├── Editor/       # Section editors
+│   │   └── Preview/      # Preview components
+│   ├── hooks/            # Custom React hooks
+│   ├── types/            # TypeScript type definitions
+│   ├── utils/            # Utility functions
+│   └── styles/           # CSS files
+├── public/               # Static assets
+└── package.json
+```
+
+## 🤝 Contributing
+
+This project is currently in early development. Contributions, issues, and feature requests are welcome!
+
+## 📝 License
+
+MIT
+
+## 🔗 Links
+
+- [Report Bug](https://github.com/yourusername/cvmaker/issues)
+- [Request Feature](https://github.com/yourusername/cvmaker/issues)
+
+---
+
+**Status**: 🟡 Work in Progress | **Last Updated**: December 2024

@@ -38,7 +38,7 @@ export interface HeaderField {
     value: string;
     enabled: boolean;
     order: number;
-    layout: 'full' | 'half'; // full = ancho completo, half = comparte fila
+    layout: 'full' | 'half' | 'third'; // full = ancho completo, half = 1/2, third = 1/3
 }
 
 export interface HeaderSection {

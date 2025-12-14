@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CV, ExperienceSection, EducationSection, SkillsSection, SummarySection, HeaderSection, Section, ProjectsSection, LanguagesSection, CertificationsSection, AwardsSection } from '../types';
+import type { CV, ExperienceSection, EducationSection, SkillsSection, SummarySection, HeaderSection, HeaderField, Section, ProjectsSection, LanguagesSection, CertificationsSection, AwardsSection } from '../types';
 import { ProjectsPreview } from './Preview/ProjectsPreview';
 import { LanguagesPreview } from './Preview/LanguagesPreview';
 import { CertificationsPreview } from './Preview/CertificationsPreview';
@@ -15,13 +15,48 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cv }) => {
         .filter(s => s.isActive)
         .sort((a, b) => a.order - b.order);
 
-    // Helper functions for header
-    const getContactLine = (headerSection: HeaderSection) => {
-        const enabledFields = headerSection.fields
+    // Helper to render contact fields with proper layout
+    const renderContactFields = (headerSection: HeaderSection) => {
+        const contactFields = headerSection.fields
             .filter(f => f.enabled && f.value && f.type !== 'fullName' && f.type !== 'jobPosition')
             .sort((a, b) => a.order - b.order);
 
-        return enabledFields.map(f => f.value).join(' • ');
+        if (contactFields.length === 0) return null;
+
+        const rows: HeaderField[][] = [];
+        let currentRow: HeaderField[] = [];
+        let currentRowWidth = 0;
+
+        contactFields.forEach(field => {
+            const fieldWidth = field.layout === 'full' ? 1 : field.layout === 'half' ? 0.5 : 0.33;
+
+            if (currentRowWidth + fieldWidth > 1.01) { // Small tolerance for floating point
+                rows.push([...currentRow]);
+                currentRow = [field];
+                currentRowWidth = fieldWidth;
+            } else {
+                currentRow.push(field);
+                currentRowWidth += fieldWidth;
+            }
+        });
+
+        if (currentRow.length > 0) rows.push(currentRow);
+
+        return rows.map((row, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '2px' }}>
+                {row.map(field => (
+                    <span
+                        key={field.id}
+                        style={{
+                            flex: field.layout === 'full' ? '1 1 100%' :
+                                field.layout === 'half' ? '1 1 50%' : '1 1 33%'
+                        }}
+                    >
+                        {field.value}
+                    </span>
+                ))}
+            </div>
+        ));
     };
 
     const getFullName = (headerSection: HeaderSection) => {
@@ -46,9 +81,9 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cv }) => {
                     <header key={section.id} className={headerClass}>
                         <h1 className="cv-name">{getFullName(headerData)}</h1>
                         {getJobPosition(headerData) && <div className="cv-subtitle">{getJobPosition(headerData)}</div>}
-                        {getContactLine(headerData) && (
-                            <div className="cv-contact">{getContactLine(headerData)}</div>
-                        )}
+                        <div className="cv-contact">
+                            {renderContactFields(headerData)}
+                        </div>
                     </header>
                 );
             }
@@ -76,9 +111,10 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cv }) => {
                                         <div className="exp-company">{item.company || 'Company Name'}</div>
                                     </div>
                                     <div className="exp-date">
-                                        {item.startDate ? new Date(item.startDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' }) : 'Start'}
-                                        {' - '}
-                                        {item.endDate ? new Date(item.endDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' }) : 'Present'}
+                                        {item.dateFormat === 'year-only'
+                                            ? `${item.startDate ? new Date(item.startDate).getFullYear() : 'Start'} - ${item.endDate ? new Date(item.endDate).getFullYear() : 'Present'}`
+                                            : `${item.startDate ? new Date(item.startDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' }) : 'Start'} - ${item.endDate ? new Date(item.endDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'short' }) : 'Present'}`
+                                        }
                                         {item.location && `, ${item.location}`}
                                     </div>
                                 </div>
