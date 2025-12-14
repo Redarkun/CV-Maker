@@ -20,7 +20,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useCV } from '../hooks/useCV';
+import { useSuggestions } from '../hooks/useSuggestions';
 import { CVPreview } from '../components/CVPreview';
+import { SuggestionsSidebar } from '../components/SuggestionsSidebar';
+import { ActiveFieldProvider, useActiveField } from '../context/ActiveFieldContext';
 import { exportToDOCX } from '../utils/exportDOCX';
 import {
     HeaderEditor,
@@ -196,8 +199,18 @@ const DroppableZone: React.FC<{ id: string; children: React.ReactNode; className
     );
 };
 
-export const EditorView: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
+export const EditorView: React.FC<EditorViewProps> = (props) => {
+    return (
+        <ActiveFieldProvider>
+            <EditorViewContent {...props} />
+        </ActiveFieldProvider>
+    );
+};
+
+const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
     const { currentCV, setCurrentCV, updateSection } = useCV();
+    const { suggestions, removeSuggestion, getSuggestionsForField } = useSuggestions();
+    const { activeField, setActiveField } = useActiveField();
     const [activeId, setActiveId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
 
@@ -292,6 +305,17 @@ export const EditorView: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
         .filter((s) => !s.isActive)
         .sort((a, b) => a.order - b.order);
 
+    // Handlers for suggestions
+    const handlePaste = (value: string) => {
+        if (activeField) {
+            activeField.setValue(value);
+        }
+    };
+
+    const handleDeleteSuggestion = (id: string) => {
+        removeSuggestion(id);
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
@@ -360,7 +384,16 @@ export const EditorView: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
                             items={[...activeSections, ...inactiveSections].map((s) => s.id)}
                             strategy={verticalListSortingStrategy}
                         >
-                            <div className="grid grid-cols-[1fr_300px] gap-6">
+                            <div className="grid grid-cols-[250px_1fr_300px] gap-6">
+                                {/* Suggestions Sidebar - Left */}
+                                <SuggestionsSidebar
+                                    suggestions={suggestions}
+                                    activeField={activeField}
+                                    onPaste={handlePaste}
+                                    onDelete={handleDeleteSuggestion}
+                                />
+
+                                {/* Main Editor - Center */}
                                 <DroppableZone id="active-zone">
                                     <div className="space-y-4 min-h-[400px] p-2">
                                         {activeSections.length === 0 && (

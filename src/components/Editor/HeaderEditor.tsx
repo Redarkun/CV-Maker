@@ -16,6 +16,7 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useActiveField } from '../../context/ActiveFieldContext';
 import type { HeaderSection, HeaderField } from '../../types';
 
 interface HeaderEditorProps {
@@ -49,6 +50,7 @@ const fieldPlaceholders: Record<string, string> = {
 };
 
 const SortableField: React.FC<SortableFieldProps> = ({ field, onUpdate }) => {
+    const { setActiveField } = useActiveField();
     const {
         attributes,
         listeners,
@@ -112,6 +114,13 @@ const SortableField: React.FC<SortableFieldProps> = ({ field, onUpdate }) => {
                         type={field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : 'url'}
                         value={field.value}
                         onChange={(e) => onUpdate(field.id, { value: e.target.value })}
+                        onFocus={() => {
+                            setActiveField({
+                                fieldType: field.type,
+                                sectionType: 'header',
+                                setValue: (value) => onUpdate(field.id, { value }),
+                            });
+                        }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder={fieldPlaceholders[field.type]}
                     />

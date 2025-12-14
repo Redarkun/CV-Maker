@@ -119,3 +119,22 @@ export interface ATSAnalysis {
     };
     suggestions: string[]; // Recomendaciones
 }
+
+// Field Suggestions System
+export interface FieldSuggestion {
+    id: string;
+    value: string;
+    fieldType: string; // HeaderFieldType, 'company', 'role', 'degree', etc.
+    sectionType: 'header' | 'experience' | 'education' | 'skills' | 'summary';
+    metadata?: {
+        lastUsed?: Date;
+        useCount?: number;
+    };
+    createdAt: Date;
+}
+
+export interface SuggestionsStore {
+    suggestions: FieldSuggestion[];
+    version: number; // Para migraciones futuras
+}
+
