@@ -138,3 +138,18 @@ export interface SuggestionsStore {
     version: number; // Para migraciones futuras
 }
 
+// Multi-Template Management
+export interface SavedTemplate {
+    id: string;
+    name: string; // User-defined name like "CV Tech Lead 2024"
+    cv: CV; // Full CV data snapshot
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface TemplatesStore {
+    templates: SavedTemplate[];
+    activeTemplateId: string | null; // Currently active template
+    version: number;
+}
+

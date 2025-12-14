@@ -21,10 +21,15 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useCV } from '../hooks/useCV';
 import { useSuggestions } from '../hooks/useSuggestions';
+import { useTemplates } from '../hooks/useTemplates';
 import { CVPreview } from '../components/CVPreview';
 import { SuggestionsSidebar } from '../components/SuggestionsSidebar';
+import { TemplateSelector } from '../components/TemplateSelector';
+import { SaveTemplateModal } from '../components/SaveTemplateModal';
+import { SuggestionsConfirmModal, type NewSuggestionData } from '../components/SuggestionsConfirmModal';
 import { ActiveFieldProvider, useActiveField } from '../context/ActiveFieldContext';
 import { exportToDOCX } from '../utils/exportDOCX';
+import { extractSuggestionsFromCV, getNewSuggestions } from '../utils/suggestionExtractor';
 import {
     HeaderEditor,
     SummaryEditor,
@@ -209,10 +214,25 @@ export const EditorView: React.FC<EditorViewProps> = (props) => {
 
 const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
     const { currentCV, setCurrentCV, updateSection } = useCV();
-    const { suggestions, removeSuggestion, getSuggestionsForField } = useSuggestions();
-    const { activeField, setActiveField } = useActiveField();
+    const { suggestions, removeSuggestion, addBulkSuggestions } = useSuggestions();
+    const {
+        templates,
+        activeTemplateId,
+        saveTemplate,
+        updateTemplate,
+        deleteTemplate,
+        setActiveTemplate,
+        getActiveTemplate,
+    } = useTemplates();
+    const { activeField } = useActiveField();
+
     const [activeId, setActiveId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
+
+    // Template modals
+    const [showSaveModal, setShowSaveModal] = useState(false);
+    const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
+    const [pendingNewSuggestions, setPendingNewSuggestions] = useState<NewSuggestionData[]>([]);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -316,20 +336,72 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
         removeSuggestion(id);
     };
 
+    // Template handlers
+    const handleSaveTemplate = (name: string) => {
+        // Extract new suggestions from current CV
+        const extracted = extractSuggestionsFromCV(currentCV);
+        const newSuggestions = getNewSuggestions(extracted, suggestions);
+
+        // Save template
+        saveTemplate(name, currentCV);
+        setShowSaveModal(false);
+
+        // If there are new suggestions, show confirmation modal
+        if (newSuggestions.length > 0) {
+            setPendingNewSuggestions(newSuggestions);
+            setShowSuggestionsModal(true);
+        }
+    };
+
+    const handleConfirmSuggestions = (selectedSuggestions: NewSuggestionData[]) => {
+        if (selectedSuggestions.length > 0) {
+            addBulkSuggestions(selectedSuggestions);
+        }
+        setShowSuggestionsModal(false);
+        setPendingNewSuggestions([]);
+    };
+
+    const handleSelectTemplate = (templateId: string) => {
+        const template = templates.find(t => t.id === templateId);
+        if (template) {
+            setCurrentCV(template.cv);
+            setActiveTemplate(templateId);
+        }
+    };
+
+    const handleNewTemplate = () => {
+        // Just clear active, keep current CV for editing
+        setActiveTemplate(null);
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
                 <div className="max-w-[1400px] mx-auto px-4 py-3 flex justify-between items-center">
-                    <button
-                        onClick={onBack}
-                        className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                    >
-                        ← Back to Home
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={onBack}
+                            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                        >
+                            ← Back to Home
+                        </button>
+
+                        {/* Template Selector */}
+                        <TemplateSelector
+                            templates={templates}
+                            activeTemplateId={activeTemplateId}
+                            onSelectTemplate={handleSelectTemplate}
+                            onNewTemplate={handleNewTemplate}
+                            onDeleteTemplate={deleteTemplate}
+                        />
+                    </div>
 
                     <div className="flex gap-3">
-                        <button className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-                            💾 Save
+                        <button
+                            onClick={() => setShowSaveModal(true)}
+                            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                        >
+                            💾 Save Template
                         </button>
                         <button
                             onClick={() => exportToDOCX(currentCV)}
@@ -463,5 +535,22 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
                 )}
             </div>
         </div>
+
+            {/* Save Template Modal */ }
+    <SaveTemplateModal
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onSave={handleSaveTemplate}
+        existingNames={templates.map(t => t.name)}
+    />
+
+    {/* Suggestions Confirmation Modal */ }
+    <SuggestionsConfirmModal
+        isOpen={showSuggestionsModal}
+        onClose={() => setShowSuggestionsModal(false)}
+        onConfirm={handleConfirmSuggestions}
+        newSuggestions={pendingNewSuggestions}
+    />
+        </div >
     );
 };
