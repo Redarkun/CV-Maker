@@ -3,3 +3,7 @@ export { SummaryEditor } from './SummaryEditor';
 export { ExperienceEditor } from './ExperienceEditor';
 export { EducationEditor } from './EducationEditor';
 export { SkillsEditor } from './SkillsEditor';
+export { ProjectsEditor } from './ProjectsEditor';
+export { LanguagesEditor } from './LanguagesEditor';
+export { CertificationsEditor } from './CertificationsEditor';
+export { AwardsEditor } from './AwardsEditor';

@@ -1,5 +1,9 @@
 import React from 'react';
-import type { CV, ExperienceSection, EducationSection, SkillsSection, SummarySection, HeaderSection, Section } from '../types';
+import type { CV, ExperienceSection, EducationSection, SkillsSection, SummarySection, HeaderSection, Section, ProjectsSection, LanguagesSection, CertificationsSection, AwardsSection } from '../types';
+import { ProjectsPreview } from './Preview/ProjectsPreview';
+import { LanguagesPreview } from './Preview/LanguagesPreview';
+import { CertificationsPreview } from './Preview/CertificationsPreview';
+import { AwardsPreview } from './Preview/AwardsPreview';
 import '../styles/cv-preview.css';
 
 interface CVPreviewProps {
@@ -126,6 +130,26 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cv }) => {
                     </section>
                 ) : null;
             }
+
+            case 'projects':
+                return section.data.items?.length > 0 ? (
+                    <ProjectsPreview key={section.id} data={section.data as ProjectsSection} />
+                ) : null;
+
+            case 'languages':
+                return section.data.items?.length > 0 ? (
+                    <LanguagesPreview key={section.id} data={section.data as LanguagesSection} />
+                ) : null;
+
+            case 'certifications':
+                return section.data.items?.length > 0 ? (
+                    <CertificationsPreview key={section.id} data={section.data as CertificationsSection} />
+                ) : null;
+
+            case 'awards':
+                return section.data.items?.length > 0 ? (
+                    <AwardsPreview key={section.id} data={section.data as AwardsSection} />
+                ) : null;
 
             default:
                 return null;

@@ -67,6 +67,47 @@ export const useCV = () => {
                     categories: [],
                 },
             },
+            // Optional sections - Start inactive
+            {
+                id: nanoid(),
+                order: 5,
+                isActive: false,
+                data: {
+                    type: 'projects',
+                    title: 'PERSONAL PROJECTS',
+                    items: [],
+                },
+            },
+            {
+                id: nanoid(),
+                order: 6,
+                isActive: false,
+                data: {
+                    type: 'languages',
+                    title: 'LANGUAGES',
+                    items: [],
+                },
+            },
+            {
+                id: nanoid(),
+                order: 7,
+                isActive: false,
+                data: {
+                    type: 'certifications',
+                    title: 'CERTIFICATIONS',
+                    items: [],
+                },
+            },
+            {
+                id: nanoid(),
+                order: 8,
+                isActive: false,
+                data: {
+                    type: 'awards',
+                    title: 'AWARDS & HONORS',
+                    items: [],
+                },
+            },
         ],
         settings: {
             font: 'Arial',

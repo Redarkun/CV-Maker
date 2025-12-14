@@ -36,6 +36,10 @@ import {
     ExperienceEditor,
     EducationEditor,
     SkillsEditor,
+    ProjectsEditor,
+    LanguagesEditor,
+    CertificationsEditor,
+    AwardsEditor,
 } from '../components/Editor';
 import type {
     HeaderSection,
@@ -43,6 +47,10 @@ import type {
     ExperienceSection,
     EducationSection,
     SkillsSection,
+    ProjectsSection,
+    LanguagesSection,
+    CertificationsSection,
+    AwardsSection,
     Section,
     CV,
 } from '../types';
@@ -63,7 +71,12 @@ const sectionTitles: Record<string, string> = {
     experience: 'Professional Experience',
     education: 'Education',
     skills: 'Skills',
+    projects: 'Personal Projects',
+    languages: 'Languages',
+    certifications: 'Certifications',
+    awards: 'Awards & Honors',
 };
+
 
 const SortableSection: React.FC<SortableSectionProps> = ({ section, updateSection }) => {
     const {
@@ -115,6 +128,34 @@ const SortableSection: React.FC<SortableSectionProps> = ({ section, updateSectio
                 return (
                     <SkillsEditor
                         data={section.data as SkillsSection}
+                        onChange={(data) => updateSection(section.id, data)}
+                    />
+                );
+            case 'projects':
+                return (
+                    <ProjectsEditor
+                        data={section.data as ProjectsSection}
+                        onChange={(data) => updateSection(section.id, data)}
+                    />
+                );
+            case 'languages':
+                return (
+                    <LanguagesEditor
+                        data={section.data as LanguagesSection}
+                        onChange={(data) => updateSection(section.id, data)}
+                    />
+                );
+            case 'certifications':
+                return (
+                    <CertificationsEditor
+                        data={section.data as CertificationsSection}
+                        onChange={(data) => updateSection(section.id, data)}
+                    />
+                );
+            case 'awards':
+                return (
+                    <AwardsEditor
+                        data={section.data as AwardsSection}
                         onChange={(data) => updateSection(section.id, data)}
                     />
                 );
