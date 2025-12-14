@@ -165,7 +165,22 @@ export const HeaderEditor: React.FC<HeaderEditorProps> = ({ data, onChange }) =>
 
     return (
         <div className="space-y-3 p-4 bg-white border border-gray-200 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-800">Header Information</h3>
+            <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-800">Header Information</h3>
+
+                {/* Alignment Toggle */}
+                <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-700">Alignment:</label>
+                    <select
+                        value={data.alignment || 'left'}
+                        onChange={(e) => onChange({ ...data, alignment: e.target.value as 'left' | 'center' })}
+                        className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="left">Left</option>
+                        <option value="center">Centered</option>
+                    </select>
+                </div>
+            </div>
 
             <div className="pt-3 border-t border-gray-200">
                 <div className="flex justify-between items-center mb-3">

@@ -44,6 +44,7 @@ export interface HeaderField {
 export interface HeaderSection {
     type: 'header';
     fields: HeaderField[];
+    alignment?: 'left' | 'center'; // Header alignment preference
 }
 
 export interface SummarySection {

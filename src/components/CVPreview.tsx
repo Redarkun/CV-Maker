@@ -39,8 +39,11 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cv }) => {
         switch (section.data.type) {
             case 'header': {
                 const headerData = section.data as HeaderSection;
+                const alignment = headerData.alignment || 'left';
+                const headerClass = alignment === 'center' ? 'cv-header cv-header-center' : 'cv-header';
+
                 return (
-                    <header key={section.id} className="cv-header">
+                    <header key={section.id} className={headerClass}>
                         <h1 className="cv-name">{getFullName(headerData)}</h1>
                         {getJobPosition(headerData) && <div className="cv-subtitle">{getJobPosition(headerData)}</div>}
                         {getContactLine(headerData) && (

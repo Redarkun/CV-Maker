@@ -16,6 +16,7 @@ export const useCV = () => {
                 isActive: true,
                 data: {
                     type: 'header',
+                    alignment: 'left', // Default to left-aligned
                     fields: [
                         { id: nanoid(), type: 'fullName', value: '', enabled: true, order: 0, layout: 'full' },
                         { id: nanoid(), type: 'jobPosition', value: '', enabled: true, order: 1, layout: 'full' },
