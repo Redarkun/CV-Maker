@@ -35,9 +35,13 @@ export const SkillsEditor: React.FC<SkillsEditorProps> = ({ data, onChange }) =>
     };
 
     const handleSkillsTextChange = (id: string, value: string) => {
-        // Split by comma and trim
-        const skills = value.split(',').map(s => s.trim()).filter(s => s);
-        handleCategoryChange(id, 'items', skills.length > 0 ? skills : ['']);
+        // Split by comma and trim, filter out empty strings
+        const skills = value
+            .split(',')
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
+
+        handleCategoryChange(id, 'items', skills);
     };
 
     return (

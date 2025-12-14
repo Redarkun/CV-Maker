@@ -24,6 +24,10 @@ export type SectionData =
     | ExperienceSection
     | EducationSection
     | SkillsSection
+    | ProjectsSection
+    | LanguagesSection
+    | CertificationsSection
+    | AwardsSection
     | CustomSection;
 
 export type HeaderFieldType = 'fullName' | 'jobPosition' | 'email' | 'phone' | 'location' | 'linkedin' | 'portfolio';
@@ -62,6 +66,7 @@ export interface ExperienceItem {
     startDate: Date;
     endDate: Date | null; // null = "Actualidad"
     bullets: string[]; // Logros/responsabilidades
+    dateFormat?: 'month-year' | 'year-only'; // Format for display
 }
 
 export interface EducationSection {
@@ -76,6 +81,7 @@ export interface EducationItem {
     institution: string;
     year: number;
     notes?: string;
+    dateFormat?: 'month-year' | 'year-only'; // Format for display
 }
 
 export interface SkillsSection {
@@ -88,6 +94,65 @@ export interface SkillCategory {
     id: string;
     name: string; // "Técnicas", "Idiomas", etc.
     items: string[];
+}
+
+// Optional Sections - Start inactive by default
+
+export interface ProjectsSection {
+    type: 'projects';
+    title: string;
+    items: ProjectItem[];
+}
+
+export interface ProjectItem {
+    id: string;
+    name: string;
+    description: string;
+    technologies: string;
+    link?: string;
+    startDate: string;
+    endDate: string; // or "Present"
+}
+
+export interface LanguagesSection {
+    type: 'languages';
+    title: string;
+    items: LanguageItem[];
+}
+
+export interface LanguageItem {
+    id: string;
+    language: string;
+    proficiency: 'native' | 'fluent' | 'professional' | 'intermediate' | 'basic';
+}
+
+export interface CertificationsSection {
+    type: 'certifications';
+    title: string;
+    items: CertificationItem[];
+}
+
+export interface CertificationItem {
+    id: string;
+    name: string;
+    issuer: string;
+    date: string;
+    credentialId?: string;
+    link?: string;
+}
+
+export interface AwardsSection {
+    type: 'awards';
+    title: string;
+    items: AwardItem[];
+}
+
+export interface AwardItem {
+    id: string;
+    title: string;
+    issuer: string;
+    date: string;
+    description?: string;
 }
 
 export interface CustomSection {
