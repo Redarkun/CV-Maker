@@ -1,132 +1,163 @@
-import type { CV, FieldSuggestion, HeaderSection, ExperienceSection, EducationSection, SkillsSection } from '../types';
-
-interface ExtractedSuggestion {
-    value: string;
-    fieldType: string;
-    sectionType: FieldSuggestion['sectionType'];
-}
+import type { CV, FieldSuggestion, Section } from '../types';
+import type { NewSuggestionData } from '../components/SuggestionsConfirmModal';
 
 /**
- * Extract all potential suggestions from a CV
- * Returns array of unique field values that could be saved as suggestions
+ * Extract all valuable field values from a CV for suggestions
  */
-export const extractSuggestionsFromCV = (cv: CV): ExtractedSuggestion[] => {
-    const extracted: ExtractedSuggestion[] = [];
+export const extractSuggestionsFromCV = (cv: CV): NewSuggestionData[] => {
+    const suggestions: NewSuggestionData[] = [];
 
     cv.sections.forEach(section => {
-        switch (section.data.type) {
-            case 'header': {
-                const headerData = section.data as HeaderSection;
-                headerData.fields.forEach(field => {
-                    if (field.value && field.enabled) {
-                        extracted.push({
-                            value: field.value,
+        const { data } = section;
+
+        switch (data.type) {
+            case 'header':
+                // Extract header fields
+                data.fields.forEach(field => {
+                    if (field.enabled && field.value.trim()) {
+                        suggestions.push({
+                            value: field.value.trim(),
                             fieldType: field.type,
                             sectionType: 'header',
                         });
                     }
                 });
                 break;
-            }
 
-            case 'summary': {
-                // We don't suggest full summaries (too long), skip
-                break;
-            }
-
-            case 'experience': {
-                const expData = section.data as ExperienceSection;
-                expData.items.forEach(item => {
-                    if (item.company) {
-                        extracted.push({
-                            value: item.company,
+            case 'experience':
+                // Extract from each experience entry
+                data.items.forEach(item => {
+                    // Company
+                    if (item.company?.trim()) {
+                        suggestions.push({
+                            value: item.company.trim(),
                             fieldType: 'company',
                             sectionType: 'experience',
                         });
                     }
-                    if (item.role) {
-                        extracted.push({
-                            value: item.role,
-                            fieldType: 'role',
+
+                    // Job title
+                    if (item.role?.trim()) {
+                        suggestions.push({
+                            value: item.role.trim(),
+                            fieldType: 'jobTitle',
                             sectionType: 'experience',
                         });
                     }
-                    if (item.location) {
-                        extracted.push({
-                            value: item.location,
+
+                    // Location
+                    if (item.location?.trim()) {
+                        suggestions.push({
+                            value: item.location.trim(),
                             fieldType: 'location',
                             sectionType: 'experience',
                         });
                     }
-                    // Note: We don't suggest individual bullets (too specific)
                 });
                 break;
-            }
 
-            case 'education': {
-                const eduData = section.data as EducationSection;
-                eduData.items.forEach(item => {
-                    if (item.degree) {
-                        extracted.push({
-                            value: item.degree,
+            case 'education':
+                // Extract from each education entry
+                data.items.forEach(item => {
+                    // Degree/Title
+                    if (item.degree?.trim()) {
+                        suggestions.push({
+                            value: item.degree.trim(),
                             fieldType: 'degree',
                             sectionType: 'education',
                         });
                     }
-                    if (item.institution) {
-                        extracted.push({
-                            value: item.institution,
+
+                    // Institution
+                    if (item.institution?.trim()) {
+                        suggestions.push({
+                            value: item.institution.trim(),
                             fieldType: 'institution',
+                            sectionType: 'education',
+                        });
+                    }
+
+                    // Location
+                    if (item.location?.trim()) {
+                        suggestions.push({
+                            value: item.location.trim(),
+                            fieldType: 'location',
                             sectionType: 'education',
                         });
                     }
                 });
                 break;
-            }
 
-            case 'skills': {
-                const skillsData = section.data as SkillsSection;
-                skillsData.categories.forEach(category => {
-                    if (category.name) {
-                        extracted.push({
-                            value: category.name,
+            case 'skills':
+                // Extract category names only (not individual skills)
+                data.categories.forEach(category => {
+                    if (category.name?.trim()) {
+                        suggestions.push({
+                            value: category.name.trim(),
                             fieldType: 'categoryName',
                             sectionType: 'skills',
                         });
                     }
-                    // Individual skills could be suggested too, but might be too granular
-                    // Uncomment if needed:
-                    // category.items.forEach(skill => {
-                    //     extracted.push({
-                    //         value: skill,
-                    //         fieldType: 'skill',
-                    //         sectionType: 'skills',
-                    //     });
-                    // });
                 });
                 break;
-            }
+
+            case 'summary':
+                // Skip - too specific and long
+                break;
+
+            default:
+                // Handle custom sections if needed
+                break;
         }
     });
 
-    return extracted;
+    // Remove exact duplicates
+    return deduplicateSuggestions(suggestions);
 };
 
 /**
- * Filter out suggestions that already exist in the suggestions store
- * Returns only NEW suggestions that should be offered to user
+ * Remove duplicate suggestions (case-insensitive)
+ */
+const deduplicateSuggestions = (suggestions: NewSuggestionData[]): NewSuggestionData[] => {
+    const seen = new Set<string>();
+    const unique: NewSuggestionData[] = [];
+
+    suggestions.forEach(suggestion => {
+        const key = `${suggestion.fieldType}:${suggestion.sectionType}:${suggestion.value.toLowerCase()}`;
+        if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(suggestion);
+        }
+    });
+
+    return unique;
+};
+
+/**
+ * Filter extracted suggestions to only include NEW values
+ * (not already in existing suggestions)
  */
 export const getNewSuggestions = (
-    extracted: ExtractedSuggestion[],
-    existing: FieldSuggestion[]
-): ExtractedSuggestion[] => {
-    return extracted.filter(ext => {
-        // Check if this exact combination exists
-        return !existing.some(
-            exist =>
-                exist.value.toLowerCase() === ext.value.toLowerCase() &&
-                exist.fieldType === ext.fieldType &&
-                exist.sectionType === ext.sectionType
+    extracted: NewSuggestionData[],
+    existingSuggestions: FieldSuggestion[]
+): NewSuggestionData[] => {
+    return extracted.filter(newSugg => {
+        // Check if this value already exists for this field type and section
+        const exists = existingSuggestions.some(
+            existing =>
+                existing.fieldType === newSugg.fieldType &&
+                existing.sectionType === newSugg.sectionType &&
+                existing.value.toLowerCase() === newSugg.value.toLowerCase()
         );
+
+        return !exists;
     });
+};
+
+/**
+ * Validate suggestion value (not empty, reasonable length)
+ */
+export const isValidSuggestionValue = (value: string): boolean => {
+    const trimmed = value.trim();
+    return trimmed.length > 0 && trimmed.length <= 200;
 };
