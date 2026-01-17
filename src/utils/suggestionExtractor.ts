@@ -1,4 +1,4 @@
-import type { CV, FieldSuggestion, Section } from '../types';
+import type { CV, FieldSuggestion } from '../types';
 import type { NewSuggestionData } from '../components/SuggestionsConfirmModal';
 
 /**
@@ -73,15 +73,6 @@ export const extractSuggestionsFromCV = (cv: CV): NewSuggestionData[] => {
                         suggestions.push({
                             value: item.institution.trim(),
                             fieldType: 'institution',
-                            sectionType: 'education',
-                        });
-                    }
-
-                    // Location
-                    if (item.location?.trim()) {
-                        suggestions.push({
-                            value: item.location.trim(),
-                            fieldType: 'location',
                             sectionType: 'education',
                         });
                     }

@@ -22,11 +22,14 @@ import { CSS } from '@dnd-kit/utilities';
 import { useCV } from '../hooks/useCV';
 import { useSuggestions } from '../hooks/useSuggestions';
 import { useTemplates } from '../hooks/useTemplates';
+import { usePageOverflow } from '../hooks/usePageOverflow';
 import { CVPreview } from '../components/CVPreview';
 import { SuggestionsSidebar } from '../components/SuggestionsSidebar';
 import { TemplateSelector } from '../components/TemplateSelector';
 import { SaveTemplateModal } from '../components/SaveTemplateModal';
 import { SuggestionsConfirmModal, type NewSuggestionData } from '../components/SuggestionsConfirmModal';
+import { PageOverflowAlert } from '../components/PageOverflowAlert';
+import { PageSettingsPanel } from '../components/PageSettingsPanel';
 import { ActiveFieldProvider, useActiveField } from '../context/ActiveFieldContext';
 import { exportToDOCX } from '../utils/exportDOCX';
 import { extractSuggestionsFromCV, getNewSuggestions } from '../utils/suggestionExtractor';
@@ -254,16 +257,18 @@ export const EditorView: React.FC<EditorViewProps> = (props) => {
 };
 
 const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
-    const { currentCV, setCurrentCV, updateSection } = useCV();
+    const { currentCV, setCurrentCV, updateSection, updateSettings } = useCV();
     const { suggestions, removeSuggestion, addBulkSuggestions } = useSuggestions();
+
+    // Page overflow detection - calculate max height based on current margins
+    const maxContentHeight = 297 - currentCV.settings.margins.top * 10 - currentCV.settings.margins.bottom * 10; // A4 height minus margins in mm
+    const { containerRef, isOverflowing } = usePageOverflow({ maxHeightMm: maxContentHeight });
     const {
         templates,
         activeTemplateId,
         saveTemplate,
-        updateTemplate,
         deleteTemplate,
         setActiveTemplate,
-        getActiveTemplate,
     } = useTemplates();
     const { activeField } = useActiveField();
 
@@ -405,6 +410,7 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
     const handleSelectTemplate = (templateId: string) => {
         const template = templates.find(t => t.id === templateId);
         if (template) {
+            console.log('📋 Loading template:', template.name, template.cv);
             setCurrentCV(template.cv);
             setActiveTemplate(templateId);
         }
@@ -451,7 +457,10 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
                             📝 Export DOCX
                         </button>
                         <button
-                            onClick={() => onExport(currentCV)}
+                            onClick={() => {
+                                console.log('🎯 Export button clicked. Current CV:', currentCV.name || currentCV.id, currentCV);
+                                onExport(currentCV);
+                            }}
                             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                         >
                             📄 Export PDF
@@ -461,27 +470,38 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
             </div>
 
             <div className="max-w-[1400px] mx-auto py-6 px-4">
-                {/* Tabs */}
+                {/* Page Overflow Alert */}
+                <PageOverflowAlert isOverflowing={isOverflowing} />
+
+                {/* Tabs and Page Settings */}
                 <div className="mb-6">
-                    <div className="flex items-center gap-4 border-b border-gray-200">
-                        <button
-                            onClick={() => setActiveTab('editor')}
-                            className={`px-4 py-2 font-medium transition-colors ${activeTab === 'editor'
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-600 hover:text-gray-900'
-                                }`}
-                        >
-                            ✏️ Editor
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('preview')}
-                            className={`px-4 py-2 font-medium transition-colors ${activeTab === 'preview'
-                                ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-600 hover:text-gray-900'
-                                }`}
-                        >
-                            👁️ Preview
-                        </button>
+                    <div className="flex items-center justify-between border-b border-gray-200">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setActiveTab('editor')}
+                                className={`px-4 py-2 font-medium transition-colors ${activeTab === 'editor'
+                                    ? 'text-blue-600 border-b-2 border-blue-600'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                            >
+                                ✏️ Editor
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('preview')}
+                                className={`px-4 py-2 font-medium transition-colors ${activeTab === 'preview'
+                                    ? 'text-blue-600 border-b-2 border-blue-600'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                            >
+                                👁️ Preview
+                            </button>
+                        </div>
+
+                        {/* Page Settings Panel */}
+                        <PageSettingsPanel
+                            settings={currentCV.settings}
+                            onUpdateSettings={updateSettings}
+                        />
                     </div>
                 </div>
 
@@ -570,7 +590,7 @@ const EditorViewContent: React.FC<EditorViewProps> = ({ onBack, onExport }) => {
                         </DragOverlay>
                     </DndContext>
                 ) : (
-                    <div className="bg-gray-50 rounded-lg">
+                    <div className="bg-gray-50 rounded-lg" ref={containerRef}>
                         <CVPreview cv={currentCV} />
                     </div>
                 )}

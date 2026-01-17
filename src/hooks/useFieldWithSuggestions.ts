@@ -8,7 +8,7 @@ import type { FieldSuggestion } from '../types';
 export const useFieldWithSuggestions = (
     fieldType: string,
     sectionType: FieldSuggestion['sectionType'],
-    currentValue: string,
+    _currentValue: string,
     onChange: (value: string) => void
 ) => {
     const { setActiveField } = useActiveField();

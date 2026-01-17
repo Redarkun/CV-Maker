@@ -11,6 +11,7 @@ function App() {
 
   const handleExportPDF = (cv: CV) => {
     // Store CV and switch to print view
+    console.log('🖨️ Exporting CV:', cv.name || cv.id, cv);
     setCVToPrint(cv);
     setView('print');
   };

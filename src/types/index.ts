@@ -30,7 +30,7 @@ export type SectionData =
     | AwardsSection
     | CustomSection;
 
-export type HeaderFieldType = 'fullName' | 'jobPosition' | 'email' | 'phone' | 'location' | 'linkedin' | 'portfolio';
+export type HeaderFieldType = 'fullName' | 'jobPosition' | 'email' | 'phone' | 'location' | 'linkedin' | 'portfolio' | 'languages';
 
 export interface HeaderField {
     id: string;
@@ -164,7 +164,7 @@ export interface CustomSection {
 
 export interface CVSettings {
     font: 'Arial' | 'Times New Roman' | 'Calibri';
-    fontSize: number;
+    fontSize: 'minimal' | 'small' | 'normal' | 'large';
     margins: { top: number; right: number; bottom: number; left: number };
     lineSpacing: number;
 }

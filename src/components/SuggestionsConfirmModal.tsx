@@ -15,7 +15,7 @@ interface SuggestionsConfirmModalProps {
 
 export const SuggestionsConfirmModal: React.FC<SuggestionsConfirmModalProps> = ({
     isOpen,
-    onClose,
+    onClose: _onClose,
     onConfirm,
     newSuggestions,
 }) => {

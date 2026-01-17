@@ -37,6 +37,7 @@ const fieldLabels: Record<string, string> = {
     location: 'Location',
     linkedin: 'LinkedIn',
     portfolio: 'Portfolio/Website',
+    languages: 'Languages (compact)',
 };
 
 const fieldPlaceholders: Record<string, string> = {
@@ -47,6 +48,7 @@ const fieldPlaceholders: Record<string, string> = {
     location: 'Madrid, Spain',
     linkedin: 'linkedin.com/in/username',
     portfolio: 'yourwebsite.com',
+    languages: 'Spanish, English, French',
 };
 
 const SortableField: React.FC<SortableFieldProps> = ({ field, onUpdate }) => {
@@ -114,7 +116,7 @@ const SortableField: React.FC<SortableFieldProps> = ({ field, onUpdate }) => {
 
                 {field.enabled && (
                     <input
-                        type={field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : 'url'}
+                        type={field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : ['fullName', 'jobPosition', 'location', 'languages'].includes(field.type) ? 'text' : 'url'}
                         value={field.value}
                         onChange={(e) => onUpdate(field.id, { value: e.target.value })}
                         onFocus={() => {

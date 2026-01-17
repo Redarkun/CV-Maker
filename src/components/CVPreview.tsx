@@ -195,9 +195,38 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ cv }) => {
         }
     };
 
+    // Font size presets to pt values
+    const fontSizeMap: Record<typeof cv.settings.fontSize, number> = {
+        minimal: 8,
+        small: 9,
+        normal: 9.5,
+        large: 10.5,
+    };
+    const baseFontSize = fontSizeMap[cv.settings.fontSize];
+
+    // Build dynamic styles from settings
+    const dynamicStyles: React.CSSProperties = {
+        '--cv-margin-top': `${cv.settings.margins.top}cm`,
+        '--cv-margin-right': `${cv.settings.margins.right}cm`,
+        '--cv-margin-bottom': `${cv.settings.margins.bottom}cm`,
+        '--cv-margin-left': `${cv.settings.margins.left}cm`,
+        '--cv-font-family': cv.settings.font,
+        '--cv-font-size': `${baseFontSize}pt`,
+        '--cv-line-spacing': cv.settings.lineSpacing,
+    } as React.CSSProperties;
+
     return (
         <div className="cv-preview-wrapper">
-            <div className="cv-container">
+            <div
+                className="cv-container"
+                style={{
+                    ...dynamicStyles,
+                    fontFamily: cv.settings.font,
+                    fontSize: `${baseFontSize}pt`,
+                    lineHeight: cv.settings.lineSpacing,
+                    padding: `${cv.settings.margins.top}cm ${cv.settings.margins.right}cm ${cv.settings.margins.bottom}cm ${cv.settings.margins.left}cm`,
+                }}
+            >
                 {/* Render sections in order */}
                 {activeSections.map(section => renderSection(section))}
 

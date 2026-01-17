@@ -25,6 +25,7 @@ export const useCV = () => {
                         { id: nanoid(), type: 'location', value: '', enabled: false, order: 4, layout: 'full' },
                         { id: nanoid(), type: 'linkedin', value: '', enabled: false, order: 5, layout: 'half' },
                         { id: nanoid(), type: 'portfolio', value: '', enabled: false, order: 6, layout: 'half' },
+                        { id: nanoid(), type: 'languages', value: '', enabled: false, order: 7, layout: 'full' },
                     ],
                 },
             },
@@ -111,9 +112,9 @@ export const useCV = () => {
             },
         ],
         settings: {
-            font: 'Arial',
-            fontSize: 10,
-            margins: { top: 2, right: 2, bottom: 2, left: 2 },
+            font: 'Times New Roman',
+            fontSize: 'normal',
+            margins: { top: 1.5, right: 1.5, bottom: 1, left: 1.5 },
             lineSpacing: 1.25,
         },
     });
@@ -128,6 +129,14 @@ export const useCV = () => {
         }));
     };
 
+    const updateSettings = (updates: Partial<CV['settings']>) => {
+        setCurrentCV(prev => ({
+            ...prev,
+            updatedAt: new Date(),
+            settings: { ...prev.settings, ...updates },
+        }));
+    };
+
     const getSection = (sectionId: string) => {
         return currentCV.sections.find(s => s.id === sectionId);
     };
@@ -136,6 +145,7 @@ export const useCV = () => {
         currentCV,
         setCurrentCV,
         updateSection,
+        updateSettings,
         getSection,
     };
 };

@@ -75,7 +75,7 @@ export const LanguagesEditor: React.FC<LanguagesEditorProps> = ({ data, onChange
                         No languages added yet. Click "Add Language" to get started.
                     </div>
                 ) : (
-                    data.items.map((language, index) => (
+                    data.items.map((language) => (
                         <div
                             key={language.id}
                             className="border border-gray-200 rounded-md p-3 flex items-center gap-3"

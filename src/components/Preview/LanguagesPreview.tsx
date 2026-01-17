@@ -15,11 +15,11 @@ export const LanguagesPreview: React.FC<LanguagesPreviewProps> = ({ data }) => {
     };
 
     return (
-        <div className="mb-4">
-            <h2 className="text-xl font-bold uppercase border-b-2 border-gray-800 pb-1 mb-3">
+        <section className="cv-section">
+            <h2 className="section-title">
                 {data.title}
             </h2>
-            <div className="text-sm">
+            <div className="section-content">
                 {data.items.map((lang, idx) => (
                     <span key={lang.id}>
                         <strong>{lang.language}</strong> ({proficiencyLabels[lang.proficiency]})
@@ -27,6 +27,6 @@ export const LanguagesPreview: React.FC<LanguagesPreviewProps> = ({ data }) => {
                     </span>
                 ))}
             </div>
-        </div>
+        </section>
     );
 };

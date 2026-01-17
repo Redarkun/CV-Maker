@@ -1,5 +1,4 @@
 import React from 'react';
-import type { Section } from '../../types';
 
 interface SectionWrapperProps {
     children: React.ReactNode;

@@ -70,7 +70,7 @@ export const SkillsEditor: React.FC<SkillsEditorProps> = ({ data, onChange }) =>
             </div>
 
             <div className="space-y-3">
-                {data.categories.map((category, index) => (
+                {data.categories.map((category) => (
                     <div key={category.id} className="border border-gray-200 rounded-md p-3">
                         <div className="flex justify-between items-start mb-2">
                             <div className="flex-1">
